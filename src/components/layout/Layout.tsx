@@ -1,16 +1,22 @@
 import styles from './style'
-import {View} from "react-native";
+import {ImageBackground, View} from "react-native";
 import React from "react";
 
 interface Props {
     children: React.ReactNode;
+    background: any;
 }
 
-const Layout: React.FC<Props> = ({children}) => {
-    return(
-        <View style={styles.grid}>
-            {children}
-        </View>
+const Layout: React.FC<Props> = ({children, background}) => {
+    return (
+        <ImageBackground
+            source={background}
+            style={styles.background}
+        >
+            <View style={styles.grid}>
+                {children}
+            </View>
+        </ImageBackground>
     )
 }
 

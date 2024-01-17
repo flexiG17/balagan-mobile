@@ -6,6 +6,12 @@ const styles = StyleSheet.create({
         paddingTop: 80,
         paddingRight: 25,
         paddingBottom: 45
+    },
+    background: {
+        position: "absolute",
+        top: 0,
+        width: '100%',
+        height: '100%',
     }
 })
 
