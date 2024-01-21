@@ -11,9 +11,15 @@ const styles = StyleSheet.create({
         paddingLeft: 5,
         paddingRight: 5,
     },
-    text: {
+    textDecoration: {
         color: '#525050',
+        fontWeight: '400'
+    },
+    bigTextFont: {
         fontSize: 15,
+    },
+    smallTextFont: {
+        fontSize: 13,
         fontWeight: '400'
     }
 })

@@ -1,9 +1,14 @@
 import {View, Text, TouchableOpacity} from "react-native";
 import styles from "./style";
+import {NativeStackNavigationProp} from "@react-navigation/native-stack/src/types";
+import {Routes} from "../../../consts/routesNames";
 
-const InterestingComponent = () => {
+const InterestingComponent = ({navigation, id} : {navigation : NativeStackNavigationProp<any>, id: number}) => {
     return (
         <TouchableOpacity
+            onPress={() => navigation.push(Routes.EVENT_ROUTE, {
+                eventId: id
+            })}
             activeOpacity={0.8}>
             <View style={styles.block}>
                 <View style={styles.leftBlock}>

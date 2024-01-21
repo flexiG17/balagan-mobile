@@ -1,23 +1,31 @@
-import {View, Text, TouchableHighlight} from "react-native";
+import {Text, TouchableOpacity, View} from "react-native";
 import ChipInterface from "./Chip.interface";
 import styles from './style'
 import {useState} from "react";
+import ComponentSize from "../../../consts/componentSize";
 
-const Chip = ({title}: ChipInterface) => {
+const Chip = ({title, size, isEditMode = true}: ChipInterface) => {
     const [isChecked, setIsChecked] = useState(false)
 
-    return (
-        <TouchableHighlight
-            key={title}
-            onPress={() => setIsChecked(!isChecked)}
-            underlayColor="white">
+    const getComponentSize = () => {
+        if (size === ComponentSize.Small)
+            return styles.smallTextFont
+        else if (size === ComponentSize.Big)
+            return styles.bigTextFont
+    }
 
-            <View style={[styles.block, isChecked && {backgroundColor: '#B8B8B8'}]}>
-                <Text style={styles.text}>
+    return (
+        <TouchableOpacity
+            key={title}
+            onPress={() => isEditMode && setIsChecked(!isChecked)}
+            activeOpacity={0.9}
+        >
+            <View style={[styles.block, isChecked && {backgroundColor: '#3B285C'}]}>
+                <Text style={[styles.textDecoration, getComponentSize(), isChecked && {color: '#fff'}]}>
                     {title}
                 </Text>
             </View>
-        </TouchableHighlight>
+        </TouchableOpacity>
     )
 }
 

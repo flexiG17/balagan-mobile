@@ -2,11 +2,12 @@ import {StyleSheet} from "react-native";
 
 
 const styles = StyleSheet.create({
-    container: {
+    block: {
+        gap: 30
     },
-    text: {
-        fontSize: 24,
-        color: '#fff'
+    cardGrid: {
+        flexDirection: "row",
+        justifyContent: "space-between"
     }
 });
 

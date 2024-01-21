@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
     actions: {
         display: 'flex',
         flexDirection: 'row',
-        gap: 10
+        gap: 15
     }
 })
 

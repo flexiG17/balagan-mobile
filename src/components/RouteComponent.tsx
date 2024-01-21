@@ -13,7 +13,7 @@ export default function RouteComponent() {
             }}
         >
             {applicationRoutes.map(({name, component}) => {
-                return <Stack.Screen name={name} component={component}/>
+                return <Stack.Screen key={name} name={name} component={component}/>
             })}
         </Stack.Navigator>
     );

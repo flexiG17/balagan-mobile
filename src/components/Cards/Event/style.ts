@@ -2,7 +2,7 @@ import {StyleSheet} from "react-native";
 
 const styles = StyleSheet.create({
     block: {
-        width: 160,
+        width: 165,
         height: 200,
         borderRadius: 12,
         borderColor: '#D1CCF1',
@@ -38,13 +38,30 @@ const styles = StyleSheet.create({
     },
     price: {
         alignSelf: 'center',
+        marginRight: 'auto',
+
         height: 18,
         backgroundColor: '#3B285C',
         borderRadius: 20,
         paddingTop: 2.5,
-        paddingBottom: 3,
-        paddingLeft: 9,
-        paddingRight: 8
+        paddingBottom: 2,
+        paddingLeft: 7,
+        paddingRight: 7
+    },
+    editData: {
+        gap: 7,
+    },
+    editDataBlock: {
+        alignSelf: 'center',
+        borderRadius: 20,
+        paddingLeft: 7,
+        paddingRight: 7,
+        paddingTop: 2,
+        paddingBottom: 2
+    },
+    editDataText: {
+        fontSize: 8,
+        fontWeight: '500'
     },
     text: {
         color: '#fff',

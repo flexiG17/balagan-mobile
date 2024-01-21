@@ -4,10 +4,11 @@ import {navBarRoutes} from "../../routes";
 
 import {MaterialIcons} from '@expo/vector-icons';
 import {Routes} from "../../consts/routesNames";
+import {IconProps} from "@expo/vector-icons/build/createIconSet";
 
 const homeName = Routes.NAVIGATION_HOME_ROUTE
 const calendarName = Routes.CALENDAR_ROUTE
-const communityName = Routes.COMMUNITY_ROUTE
+const communityName = Routes.COMMUNITY_LIST_ROUTE
 const profileName = Routes.PROFILE_ROUTE
 
 const Tab = createBottomTabNavigator();
@@ -18,7 +19,7 @@ const NavBarComponent = () => {
             screenOptions={
             ({route}) => ({
                 tabBarIcon: ({focused, color, size}) => {
-                    let iconName: string = '';
+                    let iconName = '';
                     let routeName = route.name;
 
                     if (routeName === homeName) {
@@ -34,20 +35,19 @@ const NavBarComponent = () => {
                         iconName = focused ? 'person' : 'person-outline';
                     }
 
-                    // You can return any component that you like here!
                     // @ts-ignore
-                    return <MaterialIcons name={iconName} size={size} color={color}/>;
+                    return <MaterialIcons key={iconName} name={iconName} size={size} color={color}/>;
                 },
                 headerShown: false,
                 tabBarActiveTintColor: '#6B4EFF',
                 tabBarInactiveTintColor: '#000',
-                tabBarStyle: { height: 55, paddingBottom: 8, paddingTop: 7},
-                tabBarLabelStyle: {fontSize: 10}
+                tabBarStyle: { height: 90, paddingBottom: 40, paddingTop: 7},
+                tabBarLabelStyle: {fontSize: 10},
             })
         }>
             {
                 navBarRoutes.map(({name, component}) => {
-                    return <Tab.Screen name={name} component={component}/>
+                    return <Tab.Screen key={name} name={name} component={component}/>
                 })
             }
         </Tab.Navigator>
