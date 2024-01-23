@@ -6,11 +6,13 @@ const styles = StyleSheet.create({
         height: 110,
         backgroundColor: '#D1CCF1',
         borderRadius: 12,
+        overflow: 'hidden',
 
         display: "flex",
         flexDirection: 'row',
     },
     leftBlock: {
+        width: 110,
         height: '100%',
         backgroundColor: '#fff',
         borderTopStartRadius: 12,
@@ -21,7 +23,7 @@ const styles = StyleSheet.create({
         padding: 12,
     },
     titleBlock: {
-        gap: 5
+        gap: 5,
     },
     title: {
         color: '#3B285C',
@@ -40,6 +42,9 @@ const styles = StyleSheet.create({
 
         paddingRight: 11,
         paddingBottom: 8
+    },
+    image: {
+        width: 250
     },
     price: {
         width: 80,

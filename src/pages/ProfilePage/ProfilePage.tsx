@@ -1,5 +1,5 @@
-import {Text, TouchableOpacity, View} from 'react-native';
-import React from "react";
+import {ImageBackground, RefreshControl, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import React, {useEffect, useState} from "react";
 import BackgroundImage from "./assets/profileBackground.png";
 import Layout from "../../components/layout/Layout";
 import {NativeStackScreenProps} from "@react-navigation/native-stack";
@@ -10,141 +10,64 @@ import {favoriteSections} from "../../consts/sections";
 import Chip from "../../components/shared/chip/Chip";
 import ComponentSize from "../../consts/componentSize";
 import {Routes} from "../../consts/routesNames";
+import CustomModalComponent from "../../components/shared/modal/CustomModalComponent";
+import CommunityPageComponent from "../../components/pages/Community/CommunityPageComponent";
+import IUser from "../../interfaces/IUser";
+import {getMyProfile, getProfile} from "../../actions/userAction";
+import ProfilePageComponent from "../../components/pages/Profile/ProfilePageComponent";
 
 const ProfilePage = ({navigation}: NativeStackScreenProps<any, string>) => {
+    const [user, setUser]
+        = useState<IUser>({user_id: '', name: ''})
+    const [isLoading, setIsLoading]
+        = useState(true)
+
+    const [modalVisible, setModalVisible]
+        = useState(false);
+    const [modalText, setModalText]
+        = useState('');
+
+    const [refreshing, setRefreshing]
+        = useState(false);
+
+    const getProfileDataAction = () => {
+        setIsLoading(true)
+        getMyProfile()
+            .then(({data}) => {
+                setIsLoading(false)
+                setUser(data)
+            })
+            .catch((e) => {
+                setModalVisible(true)
+                setIsLoading(false)
+                setModalText('Возникла проблема с получением личного кабинета')
+            })
+    }
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        getProfileDataAction()
+        setRefreshing(false);
+    }, []);
+
+    useEffect(() => {
+        getProfileDataAction()
+    }, []);
     return (
-        <Layout background={BackgroundImage}>
-            <View style={styles.block}>
-                <Header
-                    title={'Профиль'}
-                    navigation={navigation}
-                    settingsAction={true}
-                />
-                <View style={styles.profile}>
-                    <View style={styles.profilePhoto}></View>
-                    <Text style={styles.profileName}>
-                        Вася Пупкин
-                    </Text>
-                    <Text style={styles.profileDescription}>
-                        Контактные данные не указаны
-                    </Text>
-                </View>
-                <View style={styles.status}>
-                    <TouchableOpacity
-                        activeOpacity={0.6}
-                        onPress={() => navigation.push(Routes.FAVORITE_ROUTE)}
-                    >
-                        <View style={styles.statusContainer}>
-                            <View style={styles.statusTextWithIcon}>
-                                <AntDesign
-                                    name="heart"
-                                    size={16}
-                                    color="#3B285C"
-                                    style={{marginTop: 1}}/>
-                                <Text style={styles.statusTitle}>
-                                    Избранное
-                                </Text>
-                            </View>
-                            <Text style={styles.statusDescription}>
-                                50 мероприятий и коммьюнити
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        activeOpacity={0.6}
-                    >
-                        <View style={styles.statusContainer}>
-                            <View style={styles.statusTextWithIcon}>
-                                <Entypo
-                                    name="star"
-                                    size={16}
-                                    color="#3B285C"
-                                    style={{marginTop: 1}}/>
-                                <Text style={styles.statusTitle}>
-                                    Ждут оценки
-                                </Text>
-                            </View>
-                            <Text style={styles.statusDescription}>
-                                10 посещенных мероприятий
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.favorite}>
-                    <View style={styles.statusTextWithIcon}>
-                        <Text style={styles.favoriteTitle}>
-                            Предпочтения
-                        </Text>
-                        <TouchableOpacity
-                            activeOpacity={0.6}>
-                            <AntDesign name="edit" size={16} color="black"
-                                       style={{marginTop: 2}}/>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.favoriteChipContainer}>
-                        {favoriteSections.map((section) => {
-                            return <Chip key={section} isEditMode={false} title={section} size={ComponentSize.Small}/>
-                        })}
-                    </View>
-                </View>
-                <View style={styles.actions}>
-                    <TouchableOpacity
-                        activeOpacity={0.6}
-                        onPress={() => {
-                            navigation.push(Routes.LIST_CREATED_EVENTS_ROUTE)
-                        }}
-                    >
-                        <View style={styles.actionBlock}>
-                            <AntDesign name="idcard" size={24} color="black"/>
-                            <View style={styles.actionClickableSection}>
-                                <Text style={styles.actionClickableSectionText}>
-                                    Созданные мероприятия
-                                </Text>
-                                <Entypo
-                                    name="chevron-thin-right"
-                                    size={18}
-                                    color="black"
-                                    style={{marginTop: 2}}/>
-                            </View>
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        activeOpacity={0.6}
-                    >
-                        <View style={styles.actionBlock}>
-                            <Feather name="edit" size={24} color="black"/>
-                            <View style={styles.actionClickableSection}>
-                                <Text style={styles.actionClickableSectionText}>
-                                    Управление контентом
-                                </Text>
-                                <Entypo
-                                    name="chevron-thin-right"
-                                    size={18}
-                                    color="black"
-                                    style={{marginTop: 2}}/>
-                            </View>
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        activeOpacity={0.6}
-                    >
-                        <View style={styles.actionBlock}>
-                            <AntDesign name="mail" size={24} color="black"/>
-                            <View style={styles.actionClickableSection}>
-                                <Text style={styles.actionClickableSectionText}>
-                                    Приглашения
-                                </Text>
-                                <Entypo
-                                    name="chevron-thin-right"
-                                    size={18}
-                                    color="black"
-                                    style={{marginTop: 2}}/>
-                            </View>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </Layout>
+        <ScrollView
+            overScrollMode={'never'}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>
+            }>
+            <CustomModalComponent modalVisible={modalVisible} setModalVisible={setModalVisible} text={modalText}/>
+            <ImageBackground
+                source={BackgroundImage}
+                style={styles.background}
+            >
+                <ProfilePageComponent navigation={navigation} isLoading={isLoading} user={user}/>
+            </ImageBackground>
+        </ScrollView>
     );
 }
 

@@ -1,6 +1,6 @@
-import {View} from 'react-native';
+import {ImageBackground, RefreshControl, ScrollView, View} from 'react-native';
 import styles from "./style";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import BackgroundImage from "./assets/background.png";
 import Layout from "../../components/layout/Layout";
 import Header from "../../components/Header/Header";
@@ -11,6 +11,11 @@ import Search from "../../components/shared/search/Search";
 import CardSectionComponent from "../../components/Cards/CardSection/CardSectionComponent";
 import advertising from "../../consts/advertising";
 import AdvertisingComponent from "../../components/Cards/Advertising/AdvertisingComponent";
+import CustomModalComponent from "../../components/shared/modal/CustomModalComponent";
+import CommunityPageComponent from "../../components/pages/Community/CommunityPageComponent";
+import ICommunity from "../../interfaces/ICommunity";
+import {getCommunities, getSingleCommunity} from "../../actions/communityActions";
+import Loading from "../../components/shared/loading/Loading";
 
 interface IProps {
     navigation: NativeStackNavigationProp<any, string>,
@@ -18,38 +23,129 @@ interface IProps {
 
 const CommunityListPage = ({navigation}: IProps) => {
     const [modalVisible, setModalVisible] = useState(false);
+    const [communities, setCommunities] = useState<ICommunity[]>([])
+    const [isLoading, setIsLoading]
+        = useState(true)
+
+    const [onlyMyCommunities, setOnlyMyCommunities] = useState<ICommunity[]>([])
+    const [isMyCommunitiesLoading, setIsMyCommunitiesLoading]
+        = useState(true)
+
+    const [filterModalVisible, setFilterModalVisible]
+        = useState(false);
+    const [modalText, setModalText]
+        = useState('');
+
+    const [refreshing, setRefreshing]
+        = useState(false);
+
+    const getCommunitiesAction = () => {
+        setIsLoading(true)
+        getCommunities(8, 0, 0)
+            .then(({data}) => {
+                setIsLoading(false)
+                setCommunities(data.data)
+            })
+            .catch((e) => {
+                setModalVisible(true)
+                setIsLoading(false)
+                setModalText('Возникла проблема с получением коммьюнити')
+            })
+    }
+    const getOnlyMyCommunities = () => {
+        setIsMyCommunitiesLoading(true)
+        getCommunities(20, 0, 1)
+            .then(({data}) => {
+                setIsMyCommunitiesLoading(false)
+                setOnlyMyCommunities(data.data)
+            })
+            .catch((e) => {
+                setModalVisible(true)
+                setIsMyCommunitiesLoading(false)
+                setModalText('Возникла проблема с получением коммьюнити')
+            })
+    }
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        getCommunitiesAction()
+        getOnlyMyCommunities()
+        setRefreshing(false);
+    }, []);
+
+    useEffect(() => {
+        getCommunitiesAction()
+    }, []);
+
+    useEffect(() => {
+        getOnlyMyCommunities()
+    }, []);
 
     return (
-        <Layout background={BackgroundImage} isModalActivated={modalVisible}>
-            <View style={styles.block}>
-                <Header
-                    navigation={navigation}
-                    title={'Коммьюнити'}
-                    createEventAction={true}
-                    createType={'community'}
-                />
-                <View style={styles.cardGrid}>
-                    {advertising.map(({id, title}) => {
-                        return <AdvertisingComponent key={id} id={id} text={title} navigation={navigation}/>
-                    })}
-                </View>
-                <Search filterType={'community'} modalVisible={modalVisible} setModalVisible={setModalVisible}/>
-                <CardSectionComponent navigation={navigation} title={'Мои коммьюнити'} count={45}>
-                    <CommunityComponent text={'Люди бегут'} size={ComponentSize.Medium} navigation={navigation} id={5}/>
-                    <CommunityComponent text={'Туда-сюда'} size={ComponentSize.Medium} navigation={navigation} id={6}/>
-                    <CommunityComponent text={'Только пятки'} size={ComponentSize.Medium} navigation={navigation} id={7}/>
-                    <CommunityComponent text={'Сверкают'} size={ComponentSize.Medium} navigation={navigation} id={8}/>
-                </CardSectionComponent>
-                <View style={{marginTop: 10}}>
-                    <CardSectionComponent navigation={navigation} title={'Популярное'} count={22}>
-                        <CommunityComponent text={'Эти люди'} size={ComponentSize.Medium} navigation={navigation} id={9}/>
-                        <CommunityComponent text={'Всегда'} size={ComponentSize.Medium} navigation={navigation} id={10}/>
-                        <CommunityComponent text={'Что делать'} size={ComponentSize.Medium} navigation={navigation} id={11}/>
-                        <CommunityComponent text={'Знают'} size={ComponentSize.Medium} navigation={navigation} id={12}/>
+        <ScrollView
+            overScrollMode={'never'}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>
+            }>
+            <CustomModalComponent modalVisible={modalVisible} setModalVisible={setModalVisible} text={modalText}/>
+            <ImageBackground
+                source={BackgroundImage}
+                style={styles.background}
+            >
+                <View style={styles.block}>
+                    <Header
+                        navigation={navigation}
+                        title={'Коммьюнити'}
+                        createEventAction={true}
+                        createType={'community'}
+                    />
+
+                    <View style={styles.cardGrid}>
+                        {isLoading
+                            ?
+                            <Loading/>
+                            :
+                            <>
+                                {communities.slice(0, 4).map((community) => {
+                                    return <AdvertisingComponent community={community} navigation={navigation}
+                                                                 key={community.community_id}/>
+                                })}
+                            </>
+                        }
+                    </View>
+                    <Search filterType={'community'} modalVisible={filterModalVisible}
+                            setModalVisible={setFilterModalVisible}/>
+                    <CardSectionComponent navigation={navigation} title={'Мои коммьюнити'} count={onlyMyCommunities.length}>
+                        {isMyCommunitiesLoading
+                            ?
+                            <Loading/>
+                            :
+                            <>
+                                {onlyMyCommunities.map(({community_id, name, image}) => {
+                                    return <CommunityComponent community_id={community_id} key={community_id}
+                                                               navigation={navigation} image={image} name={name}/>
+                                })}
+                            </>
+                        }
                     </CardSectionComponent>
+                    <CardSectionComponent navigation={navigation} title={'Популярное'} count={communities.length}>
+                        {isLoading
+                            ?
+                            <Loading/>
+                            :
+                            <>
+                                {communities.slice(4, 8).map(({community_id, name, image}) => {
+                                    return <CommunityComponent community_id={community_id} key={community_id}
+                                                               navigation={navigation} image={image} name={name}/>
+                                })}
+                            </>
+                        }
+                    </CardSectionComponent>
+
                 </View>
-            </View>
-        </Layout>
+            </ImageBackground>
+        </ScrollView>
     );
 }
 

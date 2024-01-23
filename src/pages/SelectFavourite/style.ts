@@ -6,13 +6,16 @@ const styles = StyleSheet.create({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        paddingLeft: 25,
+        paddingTop: 70,
+        paddingRight: 25,
+        paddingBottom: 45,
         gap: 45
     },
     background: {
-        position: "absolute",
         top: 0,
         width: '100%',
-        height: '100%',
+        minHeight: 900,
     },
     title: {
         color: '#fff',

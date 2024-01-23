@@ -7,6 +7,11 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         borderColor: '#D1CCF1',
         backgroundColor: '#D1CCF1',
+        overflow: 'hidden'
+    },
+    image: {
+        width: 'auto',
+        height: 'auto',
     },
     top: {
         borderTopStartRadius: 12,
@@ -29,6 +34,7 @@ const styles = StyleSheet.create({
         gap: 5,
         paddingTop: 5,
         paddingLeft: 9,
+        paddingRight: 9,
         paddingBottom: 6
     },
     icons: {
@@ -57,7 +63,7 @@ const styles = StyleSheet.create({
         paddingLeft: 7,
         paddingRight: 7,
         paddingTop: 2,
-        paddingBottom: 2
+        paddingBottom: 2,
     },
     editDataText: {
         fontSize: 8,
@@ -70,7 +76,10 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 14,
-        fontWeight: '800'
+        fontWeight: '800',
+
+        overflow: 'hidden',
+
     },
     iconWithText: {
         display: 'flex',

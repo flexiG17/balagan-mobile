@@ -1,6 +1,6 @@
 import styles from './style'
-import {ImageBackground, Pressable, ScrollView, Text, TouchableOpacity, View} from "react-native";
-import React, {useRef, useState} from "react";
+import {ImageBackground, Pressable, RefreshControl, ScrollView, Text, TouchableOpacity, View} from "react-native";
+import React, {useEffect, useRef, useState} from "react";
 import BackgroundImage from "./assets/background.png";
 import HeaderWithBack from "../../components/Header/HeaderWithBack/HeaderWithBack";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack/src/types";
@@ -10,6 +10,13 @@ import EventComponent from "../../components/Cards/Event/EventComponent";
 import EventStatus from "../../consts/eventStatus";
 import Pagination from "../../components/shared/pagination/Pagination";
 import {Routes} from "../../consts/routesNames";
+import {getEvents} from "../../actions/eventActions";
+import axios from "axios";
+import {AUTH_TOKEN, AXIOS_URL} from "../../consts/systemConsts";
+import IEvent from "../../interfaces/IEvent";
+import Loading from "../../components/shared/loading/Loading";
+import * as events from "events";
+import CustomModalComponent from "../../components/shared/modal/CustomModalComponent";
 
 interface IProps {
     navigation: NativeStackNavigationProp<any, string>,
@@ -18,14 +25,62 @@ interface IProps {
 const ListCreatedEventsPage = ({navigation}: IProps) => {
     const [isCompletedHidden, setTsCompletedHidden] = useState(false)
     const [modalVisible, setModalVisible] = useState(false);
+    const [events, setEvents] = useState<IEvent[]>([])
+    const [isLoading, setIsLoading] = useState(true)
     const scrollRef = useRef(null);
+
+    const [modalPopupVisible, setModalPopupVisible] = useState(false);
+    const [modalText, setModalText] = useState('');
+
+    const getModeratorEvents = async (limit: number, offset: number, is_me: boolean) => {
+        return await axios.get(`${AXIOS_URL}/events/check`, {
+            headers: {
+                'Authorization': AUTH_TOKEN,
+                "Content-Type": 'application/json',
+            },
+            params: {
+                limit,
+                offset,
+                is_me
+            }
+        })
+    }
+
+    useEffect(() => {
+        getModeratorEvents(20, 0, true)
+            .then(({data}) => {
+                console.log(data);
+                setEvents(data.data)
+                setIsLoading(false)
+            })
+            .catch((e) => {
+                setModalVisible(true)
+                setIsLoading(false)
+                setModalText('Возникла проблема с получением коммьюнити')
+            })
+    }, []);
+
+
+    const [refreshing, setRefreshing] = React.useState(false);
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+
+        getModeratorEvents(20, 0, true)
+
+        setRefreshing(false);
+    }, []);
 
     return (
         <ScrollView
             ref={scrollRef}
             scrollEnabled={!isCompletedHidden}
             overScrollMode={'never'}
-            showsVerticalScrollIndicator={false}>
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>
+            }>
+            <CustomModalComponent modalVisible={modalPopupVisible} setModalVisible={setModalPopupVisible}
+                                  text={modalText}/>
             <ImageBackground
                 source={BackgroundImage}
                 style={styles.background}
@@ -53,10 +108,16 @@ const ListCreatedEventsPage = ({navigation}: IProps) => {
                         </TouchableOpacity>
 
                         <View style={styles.grid}>
-                            <EventComponent isEditMode={true} status={EventStatus.Agreed} navigation={navigation} id={1}/>
-                            <EventComponent isEditMode={true} status={EventStatus.NoAgreed} navigation={navigation} id={2}/>
-                            <EventComponent isEditMode={true} status={EventStatus.Wait} navigation={navigation} id={3}/>
-                            <EventComponent isEditMode={true} status={EventStatus.Wait} navigation={navigation} id={4}/>
+                            {isLoading
+                                ?
+                                <Loading/>
+                                :
+                                <>
+                                    {events.map((event) => {
+                                        return <EventComponent key={event.event_id} event={event}
+                                                               navigation={navigation} isEditMode={true}/>
+                                    })}
+                                </>}
                         </View>
                         <Pagination/>
 
@@ -82,10 +143,10 @@ const ListCreatedEventsPage = ({navigation}: IProps) => {
                             </TouchableOpacity>
                         </View>
                         {!isCompletedHidden && <View style={styles.grid}>
-                            <EventComponent isEditMode={true} status={EventStatus.Completed} navigation={navigation}
+                            {/*<EventComponent isEditMode={true} status={EventStatus.Completed} navigation={navigation}
                                             id={5}/>
                             <EventComponent isEditMode={true} status={EventStatus.Completed} navigation={navigation}
-                                            id={6}/>
+                                            id={6}/>*/}
                         </View>}
                     </View>
                 </Pressable>

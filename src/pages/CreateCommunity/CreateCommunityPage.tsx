@@ -1,106 +1,114 @@
-import {View, Text, ScrollView, ImageBackground, TextInput, TouchableOpacity, Switch} from "react-native";
+import {
+    View,
+    Text,
+    ScrollView,
+    ImageBackground,
+    TextInput,
+    TouchableOpacity,
+    Switch,
+    RefreshControl
+} from "react-native";
 import BackgroundImage from "./assets/background.png";
 import styles from "./style";
 import HeaderWithBack from "../../components/Header/HeaderWithBack/HeaderWithBack";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack/src/types";
 import {AntDesign} from "@expo/vector-icons";
 import {sections} from "../../consts/sections";
 import Chip from "../../components/shared/chip/Chip";
 import ComponentSize from "../../consts/componentSize";
 import {Routes} from "../../consts/routesNames";
+import CreateCommunityPageComponent from "../../components/pages/CreateCommunity/CreateCommunityPageComponent";
+import ICommunity from "../../interfaces/ICommunity";
+import {createCommunity, getSingleCommunity} from "../../actions/communityActions";
+import CustomModalComponent from "../../components/shared/modal/CustomModalComponent";
+import ITag from "../../interfaces/ITag";
+import {getTags} from "../../actions/tagActions";
 
 interface IProps {
     navigation: NativeStackNavigationProp<any>,
 }
 
 const CreateCommunityPage = ({navigation}: IProps) => {
-    const [isOpenCommunity, setIsOpenCommunity] = useState(false);
+    const [tags, setTags]
+        = useState<ITag[]>([])
+    const [isLoading, setIsLoading]
+        = useState(true)
+    const [isLoadingCommunityCreated, setIsLoadingCommunityCreated] = useState(false)
 
-    const toggleSwitchIsOpenCommunity =
-        () => setIsOpenCommunity(previousState => !previousState);
+    const [modalVisible, setModalVisible]
+        = useState(false);
+    const [modalText, setModalText]
+        = useState('');
+
+    const [refreshing, setRefreshing]
+        = useState(false);
+
+    const getTagsAction = () => {
+        setIsLoading(true)
+        getTags(50, 0)
+            .then(({data}) => {
+                setIsLoading(false)
+                setTags(data.data)
+            })
+            .catch((e) => {
+                setModalVisible(true)
+                setIsLoading(false)
+                setModalText('Возникла проблема с получением коммьюнити')
+            })
+    }
+
+    const createNewCommunity = (dataToSave : {name: string, description: string, tags: string[], visible: boolean}) => {
+        setIsLoadingCommunityCreated(true)
+        createCommunity(dataToSave)
+            .then(({data}) => {
+                setIsLoadingCommunityCreated(false)
+                setModalVisible(true)
+                setModalText('Коммьюнити успешно создано!')
+                setTags(data.data)
+
+                setTimeout(() => {
+                    setModalVisible(false)
+                    navigation.pop()
+                    navigation.navigate(Routes.COMMUNITY_LIST_ROUTE)
+                }, 1500)
+            })
+            .catch((e) => {
+                setModalVisible(true)
+                setIsLoadingCommunityCreated(false)
+                setModalText('Возникла проблема с созданием коммьюнити')
+            })
+    }
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+
+        getTagsAction()
+
+        setRefreshing(false);
+    }, []);
+
+    useEffect(() => {
+        getTagsAction()
+    }, []);
+
 
     return (
         <ScrollView
             overScrollMode={'never'}
-            showsVerticalScrollIndicator={false}>
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>
+            }>
+            <CustomModalComponent modalVisible={modalVisible} setModalVisible={setModalVisible} text={modalText}/>
             <ImageBackground
                 source={BackgroundImage}
                 style={styles.background}
             >
-                <View style={styles.block}>
-                    <HeaderWithBack navigation={navigation}
-                                    title={'Создание коммьюнити'}/>
-
-                    <View style={styles.inputBlock}>
-                        <Text style={styles.title}>
-                            Название коммьюнити
-                        </Text>
-                        <TextInput
-                            style={styles.search}
-                        />
-                    </View>
-                    <View style={styles.inputBlock}>
-                        <Text style={styles.title}>
-                            Описание
-                        </Text>
-                        <Text style={styles.description}>
-                            макс. знаков = 500
-                        </Text>
-                        <TextInput
-                            style={[styles.search, styles.multiline]}
-                            multiline={true}
-                        />
-                    </View>
-                    <View style={styles.inputBlock}>
-                        <Text style={styles.title}>
-                            Добавить фото
-                        </Text>
-                        <View style={styles.addPhotoIcon}>
-                            <TouchableOpacity
-                                activeOpacity={0.5}
-                            >
-                                <AntDesign name="plus" size={24} color="#fff"/>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <View style={styles.inputBlock}>
-                        <Text style={styles.title}>
-                            Разделы
-                        </Text>
-                        <View style={styles.sectionGrid}>
-                            {sections.map((section) => {
-                                return <Chip key={section} title={section} size={ComponentSize.Small}/>
-                            })}
-                        </View>
-                    </View>
-                    <View style={styles.inputBlock}>
-                        <View style={styles.textWithSwitch}>
-                            <View style={styles.switchTextPosition}>
-                                <Text style={styles.title}>
-                                    Открытое коммьюнити
-                                </Text>
-                            </View>
-                            <Switch
-                                trackColor={{false: '#b7b1ee', true: '#b7b1ee'}}
-                                thumbColor={isOpenCommunity ? '#ADF5B9' : '#FFAAAA'}
-                                onValueChange={toggleSwitchIsOpenCommunity}
-                                value={isOpenCommunity}/>
-                        </View>
-                        <Text style={styles.description}>
-                            Если коммтюнити закрытое, то участники не могут вступить без разрешения владельца
-                        </Text>
-                    </View>
-                    <TouchableOpacity
-                        activeOpacity={0.7}
-                        style={styles.button}
-                        onPress={() => navigation.navigate(Routes.COMMUNITY_LIST_ROUTE)}
-                    >
-                        <Text style={styles.buttonText}>
-                            Создать
-                        </Text>
-                    </TouchableOpacity>
-                </View>
+                <CreateCommunityPageComponent
+                    navigation={navigation}
+                    createCommunity={createNewCommunity} isLoadingCommunityCreated={isLoadingCommunityCreated}
+                    tags={tags} isLoading={isLoading}/>
             </ImageBackground>
         </ScrollView>
     )

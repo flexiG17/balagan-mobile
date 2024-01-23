@@ -4,7 +4,6 @@ import {NavigationContainer} from '@react-navigation/native';
 import RouteComponent from "./src/components/RouteComponent";
 import NavBarComponent from "./src/components/NavBarComponent/NavBarComponent";
 
-
 export default function App() {
     return (
         <NavigationContainer>

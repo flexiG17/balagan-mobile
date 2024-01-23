@@ -2,8 +2,10 @@ import {StyleSheet} from "react-native";
 
 const styles = StyleSheet.create({
     block: {
+        maxWidth: 60,
         gap: 6,
-        alignItems: 'center'
+        alignItems: 'center',
+        flexWrap: 'wrap'
     },
     image: {
         width: 45,

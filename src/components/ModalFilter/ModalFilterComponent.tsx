@@ -47,9 +47,9 @@ const ModalFilterComponent = ({modalVisible, setModalVisible, type}: IProps) => 
                                 {type === 'event' && 'Разделы'}
                             </Text>
                             <View style={styles.grid}>
-                                {sections.map((section) => {
+                                {/*{sections.map((section) => {
                                     return <Chip key={section} title={section} size={ComponentSize.Small}/>
-                                })}
+                                })}*/}
                             </View>
                             <View style={styles.lineSeparator}/>
                         </View>

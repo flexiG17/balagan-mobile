@@ -3,7 +3,12 @@ import {StyleSheet} from "react-native";
 const styles = StyleSheet.create({
     block: {
         gap: 6,
-        alignItems: 'center'
+        alignItems: 'center',
+    },
+    image: {
+        borderWidth: 3,
+        borderColor: '#D898C3',
+        borderRadius: 50,
     },
     text: {
         textAlign: "center",

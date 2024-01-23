@@ -7,12 +7,13 @@ const Stack = createNativeStackNavigator();
 export default function RouteComponent() {
     return (
         <Stack.Navigator
-            initialRouteName={Routes.REGISTRATION_ROUTE}
+            initialRouteName={Routes.NAVIGATION_ROUTE}
             screenOptions={{
                 headerShown: false
             }}
         >
             {applicationRoutes.map(({name, component}) => {
+                // @ts-ignore
                 return <Stack.Screen key={name} name={name} component={component}/>
             })}
         </Stack.Navigator>

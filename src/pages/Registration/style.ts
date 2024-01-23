@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     placeHolder : {
         color: 'red'
     },
-    button: {
+    submitButton: {
         display: "flex",
         justifyContent: "center",
 
@@ -53,6 +53,14 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '500',
         textAlign: "center"
+    },
+    helpText: {
+        color: '#fff',
+        fontSize: 12,
+        fontWeight: '400',
+        textDecorationLine: 'underline',
+
+        textAlign: 'left'
     }
 });
 

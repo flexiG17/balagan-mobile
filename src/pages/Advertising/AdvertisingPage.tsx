@@ -7,14 +7,13 @@ import Layout from "../../components/layout/Layout";
 import React from "react";
 import UserComponent from "../../components/Cards/User/UserComponent";
 import {Routes} from "../../consts/routesNames";
+import ICommunity from "../../interfaces/ICommunity";
+import IUser from "../../interfaces/IUser";
 
 
 type ParamsList = {
     params: {
-        advertising: {
-            id: number,
-            text: string
-        }
+        advertising : ICommunity
     }
 }
 
@@ -23,29 +22,25 @@ interface IProps {
     route: RouteProp<ParamsList>,
 }
 const AdvertisingPage = ({navigation, route} : IProps) => {
-    const title = route.params.advertising.text
-    const communityDescription =
-        `Не знаешь, чем себя занять?\nНе знаешь, что делать в свободное время?
-                        \nМы ищем интересные мероприяия города и ходим на них все вместе: начиная от спортивного скалолазания, заканчивая играми в настольные игры. Если вам нравится делать все и сразу: будем вас ждать!`
+    const props = route.params.advertising
 
     return (
         <Layout background={BackgroundImage}>
             <View style={styles.block}>
                 <Text style={styles.title}>
-                    {title}
+                    {props.name}
                 </Text>
                 <Text style={styles.text}>
-                    {communityDescription}
+                    {props.description}
                 </Text>
                 <View style={styles.usersSection}>
                     <Text style={styles.popularUsers}>
                         Популярные люди в коммьнити
                     </Text>
                     <View style={styles.usersGrid}>
-                        <UserComponent lightMode={true} navigation={navigation} id={1} name={'Вера Крутова'}/>
-                        <UserComponent lightMode={true} navigation={navigation} id={2} name={'Вася Пупкин'}/>
-                        <UserComponent lightMode={true} navigation={navigation} id={3} name={'Иван Иванов'}/>
-                        <UserComponent lightMode={true} navigation={navigation} id={4} name={'Валерия Якушева'}/>
+                        {props.users?.data.splice(0,4).map(({user_id, name}) => {
+                            return <UserComponent lightMode={true} navigation={navigation} user_id={user_id} name={name}/>
+                        })}
                     </View>
                 </View>
             </View>
@@ -55,8 +50,8 @@ const AdvertisingPage = ({navigation, route} : IProps) => {
                     style={styles.button}
                     onPress={() => navigation.navigate(Routes.COMMUNITY_ROUTE, {
                         community: {
-                            id: route.params.advertising.id,
-                            text: title
+                            community_id: route.params.advertising.community_id,
+                            name: props.name
                         }})}
                 >
                     <Text style={styles.buttonText}>

@@ -43,10 +43,10 @@ const FavoritePage = ({navigation}: IProps) => {
                         </TouchableOpacity>
 
                         <View style={styles.grid}>
-                            <EventComponent id={1} navigation={navigation} isFavorite={true}/>
+                            {/*<EventComponent id={1} navigation={navigation} isFavorite={true}/>
                             <EventComponent id={2} navigation={navigation} isFavorite={true}/>
                             <EventComponent id={3} navigation={navigation} isFavorite={true}/>
-                            <EventComponent id={4} navigation={navigation} isFavorite={true}/>
+                            <EventComponent id={4} navigation={navigation} isFavorite={true}/>*/}
                         </View>
                         <Pagination/>
 
@@ -72,8 +72,8 @@ const FavoritePage = ({navigation}: IProps) => {
                         </View>
                         {!isCompletedHidden &&
                             <View style={styles.grid}>
-                                <EventComponent id={5} navigation={navigation} isFavorite={true}/>
-                                <EventComponent id={6} navigation={navigation} isFavorite={true}/>
+                                {/*<EventComponent id={5} navigation={navigation} isFavorite={true}/>
+                                <EventComponent id={6} navigation={navigation} isFavorite={true}/>*/}
                                 <Pagination/>
                             </View>}
                     </View>

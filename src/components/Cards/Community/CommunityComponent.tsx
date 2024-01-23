@@ -5,11 +5,10 @@ import ComponentSize from "../../../consts/componentSize";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack/src/types";
 import {Routes} from "../../../consts/routesNames";
 import {RouteProp} from "@react-navigation/native";
+import ICommunity from "../../../interfaces/ICommunity";
 
-interface IProps {
+interface IProps extends ICommunity{
     navigation: NativeStackNavigationProp<any>,
-    text: string,
-    id: number,
     size?: ComponentSize
 }
 
@@ -37,17 +36,17 @@ const CommunityComponent: React.FC<IProps> = (props) => {
             activeOpacity={0.6}
             onPress={() => props.navigation.push(Routes.COMMUNITY_ROUTE, {
                 community: {
-                    id: props.id,
-                    text: props.text}
+                    community_id: props.community_id,
+                    name: props.name}
             })}
         >
             <View style={styles.block}>
                 <Image
-                    source={require('./assets/circuit.png')}
-                    style={getComponentSize().size}
+                    source={{uri: props.image}}
+                    style={[getComponentSize().size, styles.image]}
                 />
                 <Text style={[styles.text, getComponentSize().font]}>
-                    {props.text}
+                    {props.name}
                 </Text>
             </View>
         </TouchableOpacity>

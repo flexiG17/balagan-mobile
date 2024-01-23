@@ -8,7 +8,7 @@ interface Props {
     navigation: NativeStackNavigationProp<any>,
     children: React.ReactNode;
     title: string;
-    count: number,
+    count?: number,
 }
 
 const CardSectionComponent: React.FC<Props> = ({navigation, children, title, count}) => {

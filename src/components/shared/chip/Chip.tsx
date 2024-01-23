@@ -3,8 +3,11 @@ import ChipInterface from "./Chip.interface";
 import styles from './style'
 import {useState} from "react";
 import ComponentSize from "../../../consts/componentSize";
+import ITag from "../../../interfaces/ITag";
+import {getResultTagList} from "../../../pages/SelectFavourite/SelectFavouritePage";
 
-const Chip = ({title, size, isEditMode = true}: ChipInterface) => {
+
+const Chip = ({name, tag_id, size, isEditMode = true}: ChipInterface) => {
     const [isChecked, setIsChecked] = useState(false)
 
     const getComponentSize = () => {
@@ -16,13 +19,16 @@ const Chip = ({title, size, isEditMode = true}: ChipInterface) => {
 
     return (
         <TouchableOpacity
-            key={title}
-            onPress={() => isEditMode && setIsChecked(!isChecked)}
+            key={tag_id}
+            onPress={() => {
+                isEditMode && setIsChecked(!isChecked)
+                getResultTagList(tag_id)
+            }}
             activeOpacity={0.9}
         >
             <View style={[styles.block, isChecked && {backgroundColor: '#3B285C'}]}>
                 <Text style={[styles.textDecoration, getComponentSize(), isChecked && {color: '#fff'}]}>
-                    {title}
+                    {name}
                 </Text>
             </View>
         </TouchableOpacity>
